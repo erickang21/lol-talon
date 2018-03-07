@@ -1,10 +1,10 @@
 import setuptools
 
-description = "Asynchronous League Of Legends API Wrapper"
+description = "League Of Legends API Wrapper for Python"
 long_description = open("README.md").read()
 version="1.0.0"
 
-packages = ['lolbanana']
+packages = ['lol']
 
 setuptools.setup(
     name='League of Bananas',
