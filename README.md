@@ -20,7 +20,8 @@ To update the wrapper, run `pip install -U git+https://github.com/bananaboy21/lo
 import talon
 client = talon.Client(token='Your token BLAH BLAH BLAH')
 summoner = client.get_summoner(region=None, query='banana boy')
-print(summoner.summonerLevel)```
+print(summoner.summonerLevel)
+```
 
 This will output my Summoner Level given the region as `None` (which defaults it to NA1), and the query, or player name, as "banana boy". My level is `28` (I suck.)
 
