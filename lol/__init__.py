@@ -1,4 +1,5 @@
 import aiohttp
+import box
 
 
 class LolError(Exception):
@@ -22,7 +23,7 @@ class Client:
     		if resp.status != 200:
     			raise LolError(f"Riot API returned a non-200 code. Details: {resp.status}")
     		resp = await resp.json()
-    		return resp
+    		return box.Box(resp)
 
     '''
     Champions
