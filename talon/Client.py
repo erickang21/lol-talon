@@ -18,6 +18,7 @@ class Client:
         self.query_string = {"api_key": token}
         self.base_url = ".api.riotgames.com/lol/"
         self.session = aiohttp.ClientSession() if session is None else session
+        
 
 
 
