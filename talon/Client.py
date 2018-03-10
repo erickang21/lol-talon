@@ -129,7 +129,7 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        return await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region)
+        return await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
 
 
     '''
