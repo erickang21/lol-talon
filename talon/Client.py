@@ -102,7 +102,7 @@ class Client:
             region = 'na1'
         lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
         summonerid = lol.id
-        return await self._get(endpoint="champion-mastery/v3/champion-masteries/by-summoner/", query=query, region=region)
+        return await self._get(endpoint="champion-mastery/v3/champion-masteries/by-summoner/", query=summonerid, region=region)
 
 
 
