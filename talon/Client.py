@@ -13,7 +13,20 @@ class LolError(Exception):
 
 
 class Client:
-	def __init__(self, token, session=None):
+    '''
+    This class is the main client of the Talon wrapper.
+    It represents the object that is used to connect to the client.
+    Through this object, you can request any endpoints that are listed below.
+    '''
+
+    def __init__(self, token, session=None):
+        '''
+        Constructs the Client used for requests.
+
+        ---Arguments---
+        token (Required, str): The API key that you have from the Riot API website. An invalid/blank key will return 403 (Forbidden).
+        session (Optional, ClientSession): This can be a ClientSession for the client to use. Defaults to an aiohttp.ClientSession(),
+        '''
         self.token = token
         self.query_string = {"api_key": token}
         self.base_url = ".api.riotgames.com/lol/"
