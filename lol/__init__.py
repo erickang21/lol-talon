@@ -1,5 +1,6 @@
 import aiohttp
 import box
+import urllib.parse
 
 
 class LolError(Exception):
@@ -18,10 +19,11 @@ class Client:
         self.session = aiohttp.ClientSession() if session is None else session
 
 
-    async def _get(self, endpoint, query, region):
-    	async with self.session.get(f"https://{region}{self.base_url}{endpoint}{query}", params=self.query_string) as resp:
+    async def _get(self, endpoint, query=None, region):
+        query = urllib.parse.quote(query)
+    	async with self.session.get("https://{}{}{}{}".format(region, self.base_url, endpoint, query), params=self.query_string) as resp:
     		if resp.status != 200:
-    			raise LolError(f"Riot API returned a non-200 code. Details: {resp.status}")
+    			raise LolError("Riot API returned a non-200 code. Error code: " + resp.status)
     		resp = await resp.json()
     		return box.Box(resp)
 
@@ -47,7 +49,7 @@ class Client:
     	if region is None:
     		region = 'na1'
     	
-    	return await self._get(f"static-data/v3/champions/{query}", region)
+    	return await self._get("static-data/v3/champions/{}".format(query), region)
 
 
     async def champions(self, region=None):
@@ -61,7 +63,7 @@ class Client:
     	'''
     	if region is None:
     		region = 'na1'
-    	return await self._get(f"platform/v3/champions", region)
+    	return await self._get("platform/v3/champions", region)
 
     '''
     Champion Masteries
@@ -85,9 +87,9 @@ class Client:
 		'''
 		if region is None:
 			region = 'na1'
-		lol = await self._get(f"summoner/v3/summoners/by-name/{query}", region)
+		lol = await self._get("summoner/v3/summoners/by-name/{}".format(query), region)
 		summonerid = lol['id']
-		return await self._get(f"champion-mastery/v3/champion-masteries/by-summoner/{summonerid}", region)
+		return await self._get("champion-mastery/v3/champion-masteries/by-summoner/{}".format(summonerid), region)
 
 
 
@@ -114,7 +116,7 @@ class Client:
     	'''
     	if region is None:
     		region = 'na1'
-    	return await self._get(f"summoner/v3/summoners/by-name/{query}", region)
+    	return await self._get("summoner/v3/summoners/by-name/{}".format(query), region)
 
 
     '''
@@ -137,9 +139,9 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        lol = await self._get(f"summoner/v3/summoners/by-name/{query}", region)
+        lol = await self._get("summoner/v3/summoners/by-name/{}".format(query), region)
         summonerid = lol['id']
-        return await self._get(f"/lol/league/v3/positions/by-summoner/{summonerid}", region)
+        return await self._get("/lol/league/v3/positions/by-summoner/{}".format(summonerid), region)
 
 
 

@@ -19,7 +19,7 @@ To update the wrapper, run `pip install -U git+https://github.com/bananaboy21/lo
 ```python
 import talon
 client = talon.Client(token='Your token BLAH BLAH BLAH')
-summoner = client.get_summoner(region=None, query='banana boy')
+summoner = await client.get_summoner(region=None, query='banana boy')
 print(summoner.summonerLevel)
 ```
 
