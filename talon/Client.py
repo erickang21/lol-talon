@@ -35,7 +35,7 @@ class Client:
 
 
 
-    async def _get(self, endpoint, query=None, region='na1'):
+    async def _get(self, endpoint, query, region='na1'):
         query = urllib.parse.quote(query)
         async with self.session.get("https://{}{}{}{}".format(region, self.base_url, endpoint, query), params=self.query_string) as resp:
             if resp.status != 200:
@@ -129,7 +129,7 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        return await self._get("summoner/v3/summoners/by-name/{}".format(query), region)
+        return await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region)
 
 
     '''
