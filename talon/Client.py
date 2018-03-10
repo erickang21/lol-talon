@@ -62,7 +62,7 @@ class Client:
         
         query (str): The ID of the champion that is being requested. Mandatory for this request.
         '''
-        return await self._get("static-data/v3/champions/{}".format(query), region)
+        return await self._get(endpoint="static-data/v3/champions/", query=query, region=region)
 
 
     async def champions(self, region=None):
@@ -76,7 +76,7 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        return await self._get("platform/v3/champions", region)
+        return await self._get(endpoint="platform/v3/champions", query=None, region=region)
 
     '''
     Champion Masteries
@@ -100,9 +100,9 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        lol = await self._get("summoner/v3/summoners/by-name/{}".format(query), region)
-        summonerid = lol['id']
-        return await self._get("champion-mastery/v3/champion-masteries/by-summoner/{}".format(summonerid), region)
+        lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
+        summonerid = lol.id
+        return await self._get(endpoint="champion-mastery/v3/champion-masteries/by-summoner/", query=query, region=region)
 
 
 
@@ -152,9 +152,9 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        lol = await self._get("summoner/v3/summoners/by-name/{}".format(query), region)
-        summonerid = lol['id']
-        return await self._get("/lol/league/v3/positions/by-summoner/{}".format(summonerid), region)
+        lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
+        summonerid = lol.id
+        return await self._get(endpoint="/lol/league/v3/positions/by-summoner/", query=query, region=region)
 
 
 
