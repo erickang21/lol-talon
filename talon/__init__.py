@@ -11,12 +11,14 @@ class LolError(Exception):
 	pass
 
 
+
 class Client:
 	def __init__(self, token, session=None):
         self.token = token
         self.query_string = {"api_key": token}
         self.base_url = ".api.riotgames.com/lol/"
         self.session = aiohttp.ClientSession() if session is None else session
+
 
 
     async def _get(self, endpoint, query=None, region):
