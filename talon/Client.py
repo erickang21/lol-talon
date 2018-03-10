@@ -39,7 +39,7 @@ class Client:
         query = urllib.parse.quote(query)
         async with self.session.get("https://{}{}{}{}".format(region, self.base_url, endpoint, query), params=self.query_string) as resp:
             if resp.status != 200:
-                raise LolError("Riot API returned a non-200 code. Error code: " + resp.status)
+                raise LolError("Riot API returned a non-200 code. Error code: {}".format(resp.status))
             resp = await resp.json()
             return box.Box(resp)
 
