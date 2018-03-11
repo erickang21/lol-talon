@@ -41,7 +41,10 @@ class Client:
             if resp.status != 200:
                 raise LolError("Riot API returned a non-200 code. Error code: {}".format(resp.status))
             resp = await resp.json()
-            return box.Box(resp)
+            try:
+                return box.Box(resp)
+            except:
+                return resp
 
     '''
     Champions
@@ -103,7 +106,8 @@ class Client:
         lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
         summonerid = lol.id
         return await self._get(endpoint="champion-mastery/v3/champion-masteries/by-summoner/", query=str(summonerid), region=region)
-
+        #Returning champion masteries may cause some errors with Box. Luckily I handled it. 
+        #Instead of lol.thing, you might want to try lol['thing'], in case Box broke somehow.
 
 
 
