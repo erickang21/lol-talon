@@ -36,7 +36,7 @@ class Client:
 
 
     async def _get(self, endpoint, query, region='na1'):
-        query = urllib.parse.quote(query)
+        query = urllib.parse.quote(str(query))
         async with self.session.get("https://{}{}{}{}".format(region, self.base_url, endpoint, query), params=self.query_string) as resp:
             if resp.status != 200:
                 raise LolError("Riot API returned a non-200 code. Error code: {}".format(resp.status))
