@@ -1,5 +1,5 @@
 import aiohttp
-import box
+from box import Box
 import urllib.parse
 
 
@@ -28,7 +28,6 @@ class Client:
         session (Optional, ClientSession): This can be a ClientSession for the client to use. Defaults to an aiohttp.ClientSession(),
         '''
         self.token = token
-        self.query_string = {"api_key": token}
         self.base_url = ".api.riotgames.com/lol/"
         self.session = aiohttp.ClientSession() if session is None else session
         
@@ -37,14 +36,17 @@ class Client:
 
     async def _get(self, endpoint, query, region='na1'):
         query = urllib.parse.quote(str(query))
-        async with self.session.get("https://{}{}{}{}".format(region, self.base_url, endpoint, query), params=self.query_string) as resp:
+        async with self.session.get("https://{}{}{}{}api_key={}".format(region, self.base_url, endpoint, query, self.token), params=self.query_string) as resp:
             if resp.status != 200:
                 raise LolError("Riot API returned a non-200 code. Error code: {}".format(resp.status))
             resp = await resp.json()
             try:
-                return box.Box(resp)
+                return Box(resp)
             except:
-                return resp
+                raise LolError("Error occurred while decoding data.")
+            # In an older version, I let the Box return the normal JSON response
+            # if Box'ing it failed. This time, it will only raise an error. 
+
 
     '''
     Champions
@@ -65,21 +67,21 @@ class Client:
         
         query (str): The ID of the champion that is being requested. Mandatory for this request.
         '''
-        return await self._get(endpoint="static-data/v3/champions/", query=query, region=region)
+        return await self._get(endpoint="static-data/v3/champions/", query="{}{}".format(query, "?locale=en_US&champData=all&tags=all&"), region=region)
 
 
-    async def champions(self, region=None):
+    async def get_item(self, query, region='na1'):
         '''
-        Request that gets LoL champion information for ALL champions. There is no query required for this.
+        Request that gets LoL item information for a specific item, by the item's ID.
 
         ---Arguments---
-        region (Optional, str): The region to execute this request on. 
+        region (Optional, str): The region to execute this request on.
         All possible regions for this argument include: ru, kr, br1, oc1, jp1, na1, eun1, euw1, tr1, la1, la2.
         Defaults to North America (na1) if region is None.
+
+        query (str): The ID of the item that is being requested. Mandatory for this request.
         '''
-        if region is None:
-            region = 'na1'
-        return await self._get(endpoint="platform/v3/champions", query=None, region=region)
+        return await self._get(endpoint="/lol/static-data/v3/items/", query="{}{}".format(query, "?"))
 
     '''
     Champion Masteries
@@ -94,6 +96,10 @@ class Client:
         '''
         Request that gets LoL champion mastery information for a summoner.
 
+        Note that this makes 2 requests: 
+        1 to SUMMONER-V3 to retrieve the Summoner ID associated with the username.
+        1 to CHAMPION-MASTERY-V3 to retrieve the summoner's champion masteries.
+
         ---Arguments---
         region (Optional, str): The region to execute this request on. 
         All possible regions for this argument include: ru, kr, br1, oc1, jp1, na1, eun1, euw1, tr1, la1, la2.
@@ -103,9 +109,9 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
+        lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query="{}{}".format(query, "?"), region=region)
         summonerid = lol.id
-        return await self._get(endpoint="champion-mastery/v3/champion-masteries/by-summoner/", query=str(summonerid), region=region)
+        return await self._get(endpoint="champion-mastery/v3/champion-masteries/by-summoner/", query="{}{}".format(str(summonerid), "?"), region=region)
         #Returning champion masteries may cause some errors with Box. Luckily I handled it. 
         #Instead of lol.thing, you might want to try lol['thing'], in case Box broke somehow.
 
@@ -133,7 +139,7 @@ class Client:
         '''
         if region is None:
             region = 'na1'
-        return await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
+        return await self._get(endpoint="summoner/v3/summoners/by-name/", query="{}{}".format(query, "?"), region=region)
 
 
     '''
@@ -158,7 +164,7 @@ class Client:
             region = 'na1'
         lol = await self._get(endpoint="summoner/v3/summoners/by-name/", query=query, region=region)
         summonerid = lol.id
-        return await self._get(endpoint="/lol/league/v3/positions/by-summoner/", query=query, region=region)
+        return await self._get(endpoint="/lol/league/v3/positions/by-summoner/", query="{}{}".format(summonerid, "?"), region=region)
 
 
 
