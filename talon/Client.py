@@ -56,6 +56,17 @@ class Client:
     https://developer.riotgames.com
     '''
 
+    async def get_all_champions(self, region='na1'):
+        '''
+        Gets information for ALL champion information.
+
+        ---Arguments---
+        region (Optional, str): The region to execute this request on.
+        All possible regions for this argument include: ru, kr, br1, oc1, jp1, na1, eun1, euw1, tr1, la1, la2.
+        Defaults to North America (na1) if region is None.
+        '''
+        return await self._get(endpoint="static-data/v3/champions/", query="{}".format("?locale=en_US&champData=all&tags=all&"), region=region)
+
     async def get_champion(self, query, region='na1'):
         '''
         Request that gets LoL champion information for a specific champion, by the Champion ID.
